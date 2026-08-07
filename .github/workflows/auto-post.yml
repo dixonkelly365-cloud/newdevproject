@@ -1,0 +1,67 @@
+name: Auto-generate and post original toddler episode
+
+on:
+  schedule:
+    - cron: '50 14 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  make-and-post-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install ffmpeg and rsvg-convert
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg librsvg2-bin
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate original episode
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node src/generateStory.js
+
+      - name: Render visuals ($0, no API)
+        run: node src/fetchVisuals.js
+
+      - name: Generate narration
+        run: node src/tts.js
+
+      - name: Assemble final video
+        run: node src/assembleVideo.js
+
+      - name: Upload to YouTube
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REDIRECT_URI: ${{ secrets.YOUTUBE_REDIRECT_URI }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          PRIVACY_STATUS: private   # switch to "public" once you've checked quality
+        run: node src/uploadYoutube.js
+
+      - name: Commit covered-topics history so tomorrow's episode never repeats today's
+        run: |
+          git config user.name "auto-video-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add output-state/covered-topics.json
+          git diff --staged --quiet || git commit -m "auto: record covered topic"
+          git push
+
+      - name: Save as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-video
+          path: output/final_video.mp4
+          retention-days: 7

@@ -1,0 +1,21 @@
+{
+  "name": "toddler-original",
+  "version": "1.0.0",
+  "description": "Original toddler-education videos (counting, colors, shapes, animals, manners) with a fresh original character each episode.",
+  "type": "module",
+  "scripts": {
+    "generate": "node src/generateStory.js",
+    "fetch-visuals": "node src/fetchVisuals.js",
+    "narrate": "node src/tts.js",
+    "assemble": "node src/assembleVideo.js",
+    "upload": "node src/uploadYoutube.js",
+    "auth": "node src/authYoutube.js",
+    "pipeline": "node src/pipeline.js"
+  },
+  "dependencies": {
+    "msedge-tts": "^2.0.7",
+    "googleapis": "^144.0.0",
+    "dotenv": "^16.4.5",
+    "open": "^10.1.0"
+  }
+}
