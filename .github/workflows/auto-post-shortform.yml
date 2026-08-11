@@ -51,7 +51,7 @@ jobs:
           YOUTUBE_REDIRECT_URI: ${{ secrets.YOUTUBE_REDIRECT_URI }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
-          PRIVACY_STATUS: private
+          PRIVACY_STATUS: public
         run: node src/uploadYoutube.js
 
       - name: Commit topic history so tomorrow's video never repeats today's
