@@ -1,0 +1,23 @@
+{
+  "name": "money-facts",
+  "version": "1.0.0",
+  "description": "Real money and finance facts, hook-first short videos, free automated pipeline (Gemini + Pexels + free TTS), posted to YouTube automatically. General financial education, not investment advice.",
+  "type": "module",
+  "scripts": {
+    "generate": "node src/generateStory.js",
+    "generate:long": "node src/generateStoryLongform.js",
+    "fetch-photos": "node src/fetchStockPhotos.js",
+    "narrate": "node src/tts.js",
+    "assemble": "node src/assembleVideo.js",
+    "upload": "node src/uploadYoutube.js",
+    "upload:long": "node src/uploadYoutubeLongform.js",
+    "auth": "node src/authYoutube.js",
+    "pipeline": "node src/pipeline.js"
+  },
+  "dependencies": {
+    "msedge-tts": "^2.0.7",
+    "googleapis": "^144.0.0",
+    "dotenv": "^16.4.5",
+    "open": "^10.1.0"
+  }
+}
